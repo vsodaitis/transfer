@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+    id 'io.quarkus' version '0.13.1'
+}
+
+group 'com.vytenis'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("io.quarkus:quarkus-resteasy:0.13.1")
+
+    testCompile group: 'io.quarkus', name: 'quarkus-junit5', version: '0.13.1'
+    testCompile group: 'io.rest-assured', name: 'rest-assured', version: '3.3.0'
+}
+
+test {
+    useJUnitPlatform()
+}
