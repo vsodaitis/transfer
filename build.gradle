@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'io.quarkus' version '0.13.1'
+    id 'io.freefair.lombok' version '3.2.0'
 }
 
 group 'com.vytenis'
@@ -13,10 +14,10 @@ repositories {
 }
 
 dependencies {
-    implementation("io.quarkus:quarkus-resteasy:0.13.1")
+    implementation('io.quarkus:quarkus-resteasy:0.13.1')
 
-    testCompile group: 'io.quarkus', name: 'quarkus-junit5', version: '0.13.1'
-    testCompile group: 'io.rest-assured', name: 'rest-assured', version: '3.3.0'
+    testCompile('io.quarkus:quarkus-junit5:0.13.1')
+    testCompile('io.rest-assured:rest-assured:3.3.0')
 }
 
 test {
