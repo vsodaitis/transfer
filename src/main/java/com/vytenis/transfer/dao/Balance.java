@@ -9,8 +9,8 @@ import java.util.Objects;
 @Entity
 public class Balance extends PanacheEntity {
 
-    private BigDecimal total;
-    private BigDecimal reserved;
+    public BigDecimal total;
+    public BigDecimal reserved;
 
     public BigDecimal getAvailable() {
         return Objects.requireNonNullElse(total, BigDecimal.ZERO)

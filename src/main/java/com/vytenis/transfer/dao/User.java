@@ -7,5 +7,5 @@ import javax.persistence.Entity;
 @Entity
 public class User extends PanacheEntity {
 
-    private String fullName;
+    public String fullName;
 }
