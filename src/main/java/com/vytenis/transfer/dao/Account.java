@@ -1,10 +1,15 @@
 package com.vytenis.transfer.dao;
 
-import lombok.Data;
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
-@Data
-public class Account {
+import javax.persistence.Entity;
 
-    private String fullName;
+@Entity
+public class Account extends PanacheEntity {
+
+    private User user;
+    private AccountStatus status;
+    private Balance balance;
     private String iban;
+    private String currency;
 }
