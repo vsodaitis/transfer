@@ -11,6 +11,7 @@ public class Payment {
     private Account debtor;
     private Account beneficiary;
     private BigDecimal sum;
+    private String currency;
     private PaymentStatus status;
     private LocalDateTime date;
 
@@ -44,6 +45,14 @@ public class Payment {
 
     public void setSum(BigDecimal sum) {
         this.sum = sum;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     public PaymentStatus getStatus() {
