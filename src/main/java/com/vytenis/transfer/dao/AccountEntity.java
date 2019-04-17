@@ -7,15 +7,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 @Entity
-public class Account extends PanacheEntity {
+public class AccountEntity extends PanacheEntity {
 
     @ManyToOne
-    public User user;
+    public UserEntity user;
 
     public AccountStatus status;
 
     @OneToOne
-    public Balance balance;
+    public BalanceEntity balance;
 
     public String iban;
 
