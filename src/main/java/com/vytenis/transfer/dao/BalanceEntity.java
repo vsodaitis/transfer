@@ -4,11 +4,16 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
 import javax.persistence.Entity;
 import java.math.BigDecimal;
-import java.util.Objects;
 
 @Entity
 public class BalanceEntity extends PanacheEntity {
 
     public BigDecimal total;
     public BigDecimal reserved;
+
+    public BigDecimal getAvailable() {
+        BigDecimal first = total == null ? BigDecimal.ZERO : total;
+        BigDecimal second = reserved == null ? BigDecimal.ZERO : reserved;
+        return first.subtract(second);
+    }
 }

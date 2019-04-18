@@ -1,7 +1,6 @@
 package com.vytenis.transfer.dto;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 public class Balance {
 
@@ -34,7 +33,8 @@ public class Balance {
     }
 
     public BigDecimal getAvailable() {
-        return Objects.requireNonNullElse(total, BigDecimal.ZERO)
-                .subtract(Objects.requireNonNullElse(reserved, BigDecimal.ZERO));
+        BigDecimal first = total == null ? BigDecimal.ZERO : total;
+        BigDecimal second = reserved == null ? BigDecimal.ZERO : reserved;
+        return first.subtract(second);
     }
 }
