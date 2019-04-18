@@ -25,10 +25,13 @@ public class AccountsResource {
     @Path("/{userId}")
     public List<Account> getAccounts(@PathParam("userId") Long userId) {
         User user = userService.getUser(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
         return accountService.getUserAccounts(user);
     }
 
-    @PUT
+    @POST
     public long addAccount(Account account) {
         return accountService.addUserAccount(account);
     }

@@ -23,10 +23,10 @@ public class PaymentHistoryService {
     AccountConverter accountConverter;
 
     @Transactional
-    public long addPayment(Payment payment) {
+    public Payment addPayment(Payment payment) {
         PaymentEntity paymentEntity = paymentConverter.convertToEntity(payment);
         paymentEntity.persist();
-        return paymentEntity.id;
+        return paymentConverter.convertFromEntity(paymentEntity);
     }
 
     public List<Payment> getAllPayments() {

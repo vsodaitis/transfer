@@ -18,7 +18,7 @@ public class UsersResource {
     @Inject
     UserService userService;
 
-    @PUT
+    @POST
     public Long addUser(User user) {
         return userService.addUser(user);
     }

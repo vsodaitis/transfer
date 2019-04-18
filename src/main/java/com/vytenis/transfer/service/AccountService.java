@@ -3,6 +3,7 @@ package com.vytenis.transfer.service;
 import com.vytenis.transfer.converters.AccountConverter;
 import com.vytenis.transfer.converters.UserConverter;
 import com.vytenis.transfer.dao.AccountEntity;
+import com.vytenis.transfer.dao.BalanceEntity;
 import com.vytenis.transfer.dto.Account;
 import com.vytenis.transfer.dto.User;
 
@@ -33,6 +34,8 @@ public class AccountService {
     @Transactional
     public long addUserAccount(Account account) {
         AccountEntity accountEntity = accountConverter.convertToEntity(account);
+        BalanceEntity balanceEntity = accountEntity.balance;
+        balanceEntity.persist();
         accountEntity.persist();
         return accountEntity.id;
     }

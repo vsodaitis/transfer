@@ -17,6 +17,10 @@ public class AccountConverter implements EntityConverter<AccountEntity, Account>
 
     @Override
     public AccountEntity convertToEntity(Account object) {
+        if (object == null) {
+            return null;
+        }
+
         AccountEntity entity = new AccountEntity();
         entity.id = object.getId();
         entity.balance = balanceConverter.convertToEntity(object.getBalance());
@@ -29,6 +33,10 @@ public class AccountConverter implements EntityConverter<AccountEntity, Account>
 
     @Override
     public Account convertFromEntity(AccountEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+
         Account account = new Account();
         account.setId(entity.id);
         account.setBalance(balanceConverter.convertFromEntity(entity.balance));

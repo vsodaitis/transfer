@@ -9,17 +9,21 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ApplicationScoped
 public class MoneyTransferService {
 
-    private final static Logger log = Logger.getGlobal();
+    private static final Logger log = Logger.getAnonymousLogger();
 
     private final ConcurrentMap<Account, Lock> lockMap = new ConcurrentHashMap<>();
 
@@ -34,61 +38,46 @@ public class MoneyTransferService {
 
     public Payment topUp(String iban, BigDecimal sum, String currency) {
         Account account = accountService.findByIban(iban).orElseThrow(NoSuchElementException::new);
-        Payment payment = new Payment();
-        payment.setBeneficiary(account);
-        payment.setSum(sum);
-        payment.setCurrency(currency);
-        Lock lock = lockMap.computeIfAbsent(account, acc -> new ReentrantLock());
-        lock.lock();
-        try {
-            payment.setDate(LocalDateTime.now());
-            validateAccount(account);
-            validateCurrency(account, currency);
-            balanceService.add(account.getBalance(), sum);
-            payment.setStatus(PaymentStatus.COMPLETED);
-        } catch (IllegalArgumentException e) {
-            log.info(e.getMessage());
-            payment.setStatus(PaymentStatus.DECLINED);
-        } finally {
-            lock.unlock();
-            lockMap.remove(account);
-        }
-        payment.setId(paymentHistoryService.addPayment(payment));
-        return payment;
+        return transfer(null, account, sum, currency);
     }
 
     public Payment transfer(String debtorIban, String beneficiaryIban, BigDecimal sum, String currency) {
         Account debtor = accountService.findByIban(debtorIban).orElseThrow(NoSuchElementException::new);
         Account beneficiary = accountService.findByIban(beneficiaryIban).orElseThrow(NoSuchElementException::new);
+        return transfer(debtor, beneficiary, sum, currency);
+    }
+
+    private Payment transfer(Account debtor, Account beneficiary, BigDecimal sum, String currency) {
         Payment payment = new Payment();
         payment.setDebtor(debtor);
         payment.setBeneficiary(beneficiary);
         payment.setSum(sum);
         payment.setCurrency(currency);
-        Lock debtorLock = lockMap.computeIfAbsent(debtor, acc -> new ReentrantLock());
-        Lock beneficiaryLock = lockMap.computeIfAbsent(beneficiary, acc -> new ReentrantLock());
-        debtorLock.lock();
-        beneficiaryLock.lock();
+        List<Account> accounts = Stream.of(debtor, beneficiary)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        List<Lock> locks = accounts.stream()
+                .map(account -> lockMap.computeIfAbsent(account, acc -> new ReentrantLock()))
+                .collect(Collectors.toList());
+        locks.forEach(Lock::lock);
         try {
             payment.setDate(LocalDateTime.now());
-            validateAccount(debtor);
-            validateAccount(beneficiary);
-            validateCurrency(debtor, currency);
-            validateCurrency(beneficiary, currency);
-            balanceService.subtract(debtor.getBalance(), sum);
+            accounts.stream()
+                    .peek(this::validateAccount)
+                    .forEach(account -> validateCurrency(account, currency));
+            if (debtor != null) {
+                balanceService.subtract(debtor.getBalance(), sum);
+            }
             balanceService.add(beneficiary.getBalance(), sum);
             payment.setStatus(PaymentStatus.COMPLETED);
         } catch (IllegalArgumentException e) {
             log.info(e.getMessage());
             payment.setStatus(PaymentStatus.DECLINED);
         } finally {
-            debtorLock.unlock();
-            beneficiaryLock.unlock();
-            lockMap.remove(debtorLock);
-            lockMap.remove(beneficiaryLock);
+            locks.forEach(Lock::unlock);
+            accounts.forEach(lockMap::remove);
         }
-        payment.setId(paymentHistoryService.addPayment(payment));
-        return payment;
+        return paymentHistoryService.addPayment(payment);
     }
 
     private void validateAccount(Account account) {
