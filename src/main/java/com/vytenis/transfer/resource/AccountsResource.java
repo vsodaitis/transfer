@@ -5,12 +5,14 @@ import com.vytenis.transfer.dto.User;
 import com.vytenis.transfer.service.AccountService;
 import com.vytenis.transfer.service.UserService;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 @Path("/accounts")
+@ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AccountsResource {

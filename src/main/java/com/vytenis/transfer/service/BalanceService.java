@@ -32,8 +32,5 @@ public class BalanceService {
         }
 
         balanceEntity.total = balanceEntity.total.subtract(amount);
-        if (!balanceEntity.isPersistent()) {
-            balanceEntity.persist();
-        }
     }
 }
