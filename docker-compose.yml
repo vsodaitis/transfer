@@ -1,0 +1,15 @@
+version: "3.7"
+
+services:
+  quarkus-transfer:
+    restart: on-failure
+    image: transfer-quarkus:latest
+    ports:
+    - 8082:8080
+    networks:
+      - database
+
+networks:
+  database:
+    external:
+      name: quarkus-database

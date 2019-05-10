@@ -1,0 +1,17 @@
+version: "3.7"
+
+services:
+  quarkus-postgres-db:
+    image: postgres:alpine
+    ports:
+    - 5431:5432
+    environment:
+      POSTGRES_DB: quarkus
+      POSTGRES_USER: quarkus
+      POSTGRES_PASSWORD: quarkus
+    networks:
+      - database
+
+networks:
+  database:
+    name: quarkus-database
